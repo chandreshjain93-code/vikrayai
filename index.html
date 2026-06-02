@@ -17,8 +17,8 @@
         </div>
       </div>
       <div class="flex items-center gap-4">
-        <button onclick="showApiSettings()" class="text-sm bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-2xl">🔑 API Settings</button>
-        <div class="text-right">
+        <button onclick="showApiSettings()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-2xl text-sm">🔑 API Key</button>
+        <div class="text-right text-sm">
           Jaipur Market Live<br>
           <span class="text-emerald-600 font-medium">CA Chandresh</span>
         </div>
@@ -50,7 +50,7 @@
       <div class="md:col-span-8 bg-white rounded-3xl shadow-xl flex flex-col h-[620px]">
         <div class="p-6 border-b bg-emerald-50 rounded-t-3xl">
           <h3 class="font-semibold">ChatGPT Assistant</h3>
-          <p class="text-sm text-emerald-600">Real AI • Hindi Support</p>
+          <p class="text-sm text-emerald-600">Real AI Responses</p>
         </div>
         
         <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-6"></div>
@@ -69,14 +69,20 @@
     </div>
   </div>
 
-  <!-- Hidden API Settings Modal -->
-  <div id="apiModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
-    <div class="bg-white rounded-3xl p-8 w-full max-w-md">
-      <h3 class="font-semibold mb-4">OpenAI API Key</h3>
-      <input id="apiKey" type="password" placeholder="sk-..." 
-             class="w-full border border-gray-300 rounded-2xl px-5 py-4 text-sm mb-4">
+  <!-- API Key Modal -->
+  <div id="apiModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div class="bg-white rounded-3xl p-8 w-full max-w-md mx-4">
+      <h3 class="text-xl font-semibold mb-4">Enter OpenAI API Key</h3>
+      <input id="apiKeyInput" type="password" placeholder="sk-proj-..." 
+             class="w-full border border-gray-300 rounded-2xl px-5 py-4 text-sm mb-6">
       <div class="flex gap-3">
-        <button onclick="saveApiKey()" class="flex-1 bg-emerald-600 text-white py-4 rounded-2xl">Save Key</button>
-        <button onclick="closeModal()" class="flex-1 bg-gray-200 py-4 rounded-2xl">Cancel</button>
+        <button onclick="saveApiKey()" class="flex-1 bg-emerald-600 text-white py-4 rounded-2xl font-medium">Save Key</button>
+        <button onclick="closeModal()" class="flex-1 bg-gray-200 py-4 rounded-2xl font-medium">Cancel</button>
       </div>
-      <p class="text-xs text-gray-500 mt-4">Your key is saved only in this
+    </div>
+  </div>
+
+  <script>
+    let OPENAI_API_KEY = localStorage.getItem("vikrayAI_key") || "";
+
+   
