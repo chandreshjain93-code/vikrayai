@@ -1,33 +1,886 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en-IN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#047857">
   <title>VikrayAI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7f2;
+      --panel: #ffffff;
+      --ink: #162016;
+      --muted: #66736a;
+      --line: #dfe7dd;
+      --green: #047857;
+      --green-soft: #dff5e8;
+      --amber: #b7791f;
+      --amber-soft: #fff4d6;
+      --blue: #2563eb;
+      --blue-soft: #e8f0ff;
+      --shadow: 0 16px 38px rgba(20, 31, 20, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(135deg, rgba(4, 120, 87, 0.09), transparent 34%),
+        linear-gradient(315deg, rgba(183, 121, 31, 0.11), transparent 38%),
+        var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .page {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar,
+    .panel {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(223, 231, 221, 0.86);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+      padding: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .logo {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--green);
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      color: var(--green);
+      font-size: clamp(28px, 4vw, 36px);
+      line-height: 1.05;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .market {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      text-align: right;
+    }
+
+    .market strong {
+      display: block;
+      color: var(--green);
+      font-size: 15px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.6fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 20px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .date {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .metric {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .metric:last-child {
+      margin-bottom: 0;
+    }
+
+    .metric-row,
+    .action-row,
+    .stock-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .metric-name {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .metric-value {
+      font-weight: 800;
+    }
+
+    .metric-value.green {
+      color: var(--green);
+    }
+
+    .bar {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #edf1eb;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--green);
+    }
+
+    .bar span.amber {
+      background: var(--amber);
+    }
+
+    .bar span.blue {
+      background: var(--blue);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      min-height: 88px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdf9;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 580px;
+      border-collapse: collapse;
+      background: #ffffff;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      background: #f7faf5;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .amount {
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.green {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .tag.amber {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .tag.blue {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .actions,
+    .stock-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .action-row,
+    .stock-row {
+      min-height: 54px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdf9;
+    }
+
+    .action-row strong,
+    .stock-row strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .action-row span,
+    .stock-row span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .assistant-panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .api-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(160px, 0.7fr);
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .key-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+
+    input,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    input {
+      min-height: 42px;
+      padding: 9px 11px;
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+      padding: 11px;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: rgba(4, 120, 87, 0.65);
+      box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.12);
+    }
+
+    button {
+      min-height: 42px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--green);
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 800;
+      transition: filter 160ms ease, transform 160ms ease;
+    }
+
+    button:hover {
+      filter: brightness(0.95);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      cursor: wait;
+      filter: grayscale(0.4);
+      opacity: 0.7;
+    }
+
+    .ghost-button {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--green);
+      padding: 0 12px;
+    }
+
+    .chat-log {
+      display: grid;
+      max-height: 340px;
+      min-height: 160px;
+      gap: 10px;
+      overflow-y: auto;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f7faf5;
+    }
+
+    .message {
+      max-width: min(88%, 680px);
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .message.user {
+      justify-self: end;
+      background: var(--green);
+      color: #ffffff;
+    }
+
+    .message.assistant {
+      justify-self: start;
+      border: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .message.status {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .chat-form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 96px;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .privacy-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        padding: 16px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .market {
+        text-align: left;
+      }
+
+      .layout,
+      .stats,
+      .api-grid,
+      .chat-form {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-emerald-50 to-amber-50 min-h-screen">
-  <div class="max-w-5xl mx-auto p-4 md:p-6">
-    <header class="bg-white rounded-3xl shadow p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-bold">V</div>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">V</div>
         <div>
-          <h1 class="text-3xl font-bold text-emerald-700">VikrayAI</h1>
-          <p class="text-gray-500">Powered by ChatGPT</p>
+          <h1>VikrayAI</h1>
+          <p class="subtle">Powered by ChatGPT</p>
         </div>
       </div>
-      <div class="text-right">
-        Jaipur Market Live<br>
-        <span class="text-emerald-600 font-medium">CA Chandresh</span>
-      </div>
+      <p class="market">
+        Jaipur Market Live
+        <strong>CA Chandresh</strong>
+      </p>
     </header>
 
-    <div class="grid md:grid-cols-12 gap-6">
-      <div class="md:col-span-4 space-y-6">
-        <div class="bg-white rounded-3xl p-6 shadow">
-          <h2 class="font-semibold mb-4">Today's Summary • 02 Jun</h2>
-          <div class="space-y-6">
-            <div>
-              <div class="flex justify-between mb-1"><span class="text-gray-600">Profit</span><span class="font-bold text-emerald-600">₹1,240</span></div>
-              <div class="h-2 bg-gray-100 rounded-full"><div class="h-2 bg-emerald-500 rounded-full w-4/5"></div></div>
+    <section class="layout" aria-label="VikrayAI dashboard">
+      <aside class="stack">
+        <section class="panel" aria-labelledby="summary-heading">
+          <div class="panel-head">
+            <h2 id="summary-heading">Today's Summary</h2>
+            <span class="date">02 Jun</span>
+          </div>
+
+          <div class="metric">
+            <div class="metric-row">
+              <span class="metric-name">Profit</span>
+              <span class="metric-value green">₹1,240</span>
             </div>
+            <div class="bar" role="progressbar" aria-label="Profit progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
+              <span style="width: 80%"></span>
+            </div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-row">
+              <span class="metric-name">Sales</span>
+              <span class="metric-value">₹18,900</span>
+            </div>
+            <div class="bar" role="progressbar" aria-label="Sales progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68">
+              <span class="blue" style="width: 68%"></span>
+            </div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-row">
+              <span class="metric-name">Outstanding</span>
+              <span class="metric-value">₹6,450</span>
+            </div>
+            <div class="bar" role="progressbar" aria-label="Outstanding balance level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="42">
+              <span class="amber" style="width: 42%"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="stock-heading">
+          <div class="panel-head">
+            <h2 id="stock-heading">Stock Watch</h2>
+            <span class="tag amber">3 Alerts</span>
+          </div>
+          <div class="stock-list">
+            <div class="stock-row">
+              <div>
+                <strong>Mustard Oil</strong>
+                <span>Low stock after noon orders</span>
+              </div>
+              <span class="pill">12 left</span>
+            </div>
+            <div class="stock-row">
+              <div>
+                <strong>Besan 1kg</strong>
+                <span>Fast moving item today</span>
+              </div>
+              <span class="pill">58 left</span>
+            </div>
+            <div class="stock-row">
+              <div>
+                <strong>Tea Premium</strong>
+                <span>Supplier price changed</span>
+              </div>
+              <span class="pill">Check</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <div class="stack">
+        <section class="panel" aria-labelledby="kpi-heading">
+          <div class="panel-head">
+            <h2 id="kpi-heading">Market Pulse</h2>
+            <span class="tag green">Live</span>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <span>Invoices</span>
+              <strong>46</strong>
+            </div>
+            <div class="stat">
+              <span>Cash In</span>
+              <strong>₹12,250</strong>
+            </div>
+            <div class="stat">
+              <span>UPI Share</span>
+              <strong>64%</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="sales-heading">
+          <div class="panel-head">
+            <h2 id="sales-heading">Recent Sales</h2>
+            <span class="date">Updated today</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Customer</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" class="amount">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Sharma Store</td>
+                  <td>Grocery mix</td>
+                  <td><span class="tag green">Paid</span></td>
+                  <td class="amount">₹4,850</td>
+                </tr>
+                <tr>
+                  <td>Meena Traders</td>
+                  <td>Oil and pulses</td>
+                  <td><span class="tag amber">Due</span></td>
+                  <td class="amount">₹3,200</td>
+                </tr>
+                <tr>
+                  <td>Khandelwal Mart</td>
+                  <td>Tea and snacks</td>
+                  <td><span class="tag blue">UPI</span></td>
+                  <td class="amount">₹2,760</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="actions-heading">
+          <div class="panel-head">
+            <h2 id="actions-heading">Suggested Actions</h2>
+            <span class="tag blue">AI</span>
+          </div>
+          <div class="actions">
+            <div class="action-row">
+              <div>
+                <strong>Call Meena Traders</strong>
+                <span>Invoice due today: ₹3,200</span>
+              </div>
+              <span class="pill">Due</span>
+            </div>
+            <div class="action-row">
+              <div>
+                <strong>Reorder Mustard Oil</strong>
+                <span>Expected shortage before evening sales</span>
+              </div>
+              <span class="pill">Stock</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel assistant-panel" aria-labelledby="assistant-heading">
+          <div class="panel-head">
+            <h2 id="assistant-heading">ChatGPT Assistant</h2>
+            <span class="tag green">API</span>
+          </div>
+
+          <div class="api-grid">
+            <label class="field" for="openai-api-key">
+              OpenAI API key
+              <div class="key-row">
+                <input id="openai-api-key" type="password" placeholder="sk-..." autocomplete="off">
+                <button class="ghost-button" id="toggle-api-key" type="button">Show</button>
+              </div>
+            </label>
+            <label class="field" for="openai-model">
+              Model
+              <input id="openai-model" type="text" value="gpt-5-mini" autocomplete="off">
+            </label>
+          </div>
+
+          <div class="chat-log" id="chat-log" aria-live="polite">
+            <div class="message assistant">
+              Add your OpenAI API key, then ask about sales, dues, stock, or customer follow-ups. I will include the dashboard numbers with every question.
+            </div>
+          </div>
+
+          <form class="chat-form" id="chat-form">
+            <label class="sr-only" for="chat-input">Ask ChatGPT</label>
+            <textarea id="chat-input" placeholder="Ask: What should I do first today?"></textarea>
+            <button id="send-chat" type="submit">Ask</button>
+          </form>
+
+          <p class="privacy-note">
+            Your API key is saved only for this browser session and is sent directly to OpenAI when you ask a question.
+          </p>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const OPENAI_ENDPOINT = "https://api.openai.com/v1/responses";
+      const keyInput = document.getElementById("openai-api-key");
+      const modelInput = document.getElementById("openai-model");
+      const toggleKeyButton = document.getElementById("toggle-api-key");
+      const chatForm = document.getElementById("chat-form");
+      const chatInput = document.getElementById("chat-input");
+      const chatLog = document.getElementById("chat-log");
+      const sendButton = document.getElementById("send-chat");
+      let previousResponseId = "";
+
+      const systemInstructions = [
+        "You are VikrayAI, a concise business assistant for a Jaipur market trader.",
+        "Use the provided dashboard context before answering.",
+        "Give practical next steps, short calculations, and clear priorities.",
+        "When the user asks for Hindi, reply in natural Hindi. Otherwise reply in English."
+      ].join(" ");
+
+      keyInput.value = sessionStorage.getItem("vikrayai_openai_key") || "";
+
+      keyInput.addEventListener("input", () => {
+        sessionStorage.setItem("vikrayai_openai_key", keyInput.value.trim());
+      });
+
+      toggleKeyButton.addEventListener("click", () => {
+        const showing = keyInput.type === "text";
+        keyInput.type = showing ? "password" : "text";
+        toggleKeyButton.textContent = showing ? "Show" : "Hide";
+      });
+
+      chatForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const apiKey = keyInput.value.trim();
+        const model = modelInput.value.trim() || "gpt-5-mini";
+        const question = chatInput.value.trim();
+
+        if (!apiKey) {
+          addMessage("assistant", "Please add your OpenAI API key first.");
+          keyInput.focus();
+          return;
+        }
+
+        if (!question) {
+          chatInput.focus();
+          return;
+        }
+
+        addMessage("user", question);
+        chatInput.value = "";
+        setBusy(true);
+        const statusMessage = addMessage("assistant status", "Thinking...");
+
+        try {
+          const body = {
+            model,
+            instructions: systemInstructions,
+            input: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "input_text",
+                    text: `Dashboard context:\n${getDashboardContext()}\n\nUser question:\n${question}`
+                  }
+                ]
+              }
+            ]
+          };
+
+          if (previousResponseId) {
+            body.previous_response_id = previousResponseId;
+          }
+
+          const response = await fetch(OPENAI_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${apiKey}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error?.message || `OpenAI API error: ${response.status}`);
+          }
+
+          previousResponseId = data.id || previousResponseId;
+          statusMessage.remove();
+          addMessage("assistant", getResponseText(data));
+        } catch (error) {
+          statusMessage.remove();
+          addMessage("assistant", `Could not get a reply: ${error.message}`);
+        } finally {
+          setBusy(false);
+        }
+      });
+
+      function addMessage(type, text) {
+        const message = document.createElement("div");
+        message.className = `message ${type}`;
+        message.textContent = text;
+        chatLog.appendChild(message);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        return message;
+      }
+
+      function setBusy(isBusy) {
+        sendButton.disabled = isBusy;
+        sendButton.textContent = isBusy ? "Wait" : "Ask";
+        chatInput.disabled = isBusy;
+      }
+
+      function getDashboardContext() {
+        const stats = [...document.querySelectorAll(".stat")]
+          .map((stat) => `${clean(stat.querySelector("span")?.textContent)}: ${clean(stat.querySelector("strong")?.textContent)}`)
+          .join("\n");
+
+        const stock = [...document.querySelectorAll(".stock-row")]
+          .map((row) => {
+            const name = clean(row.querySelector("strong")?.textContent);
+            const note = clean(row.querySelector("span")?.textContent);
+            const level = clean(row.querySelector(".pill")?.textContent);
+            return `${name}: ${note} (${level})`;
+          })
+          .join("\n");
+
+        const sales = [...document.querySelectorAll("tbody tr")]
+          .map((row) => {
+            const cells = [...row.querySelectorAll("td")].map((cell) => clean(cell.textContent));
+            return `${cells[0]} bought ${cells[1]}, status ${cells[2]}, amount ${cells[3]}`;
+          })
+          .join("\n");
+
+        const actions = [...document.querySelectorAll(".actions .action-row")]
+          .map((row) => `${clean(row.querySelector("strong")?.textContent)}: ${clean(row.querySelector("span")?.textContent)}`)
+          .join("\n");
+
+        return [
+          "Today's Summary: Profit ₹1,240; Sales ₹18,900; Outstanding ₹6,450.",
+          `Market Pulse:\n${stats}`,
+          `Stock Watch:\n${stock}`,
+          `Recent Sales:\n${sales}`,
+          `Suggested Actions:\n${actions}`
+        ].join("\n\n");
+      }
+
+      function getResponseText(data) {
+        if (data.output_text) {
+          return data.output_text.trim();
+        }
+
+        const output = (data.output || [])
+          .flatMap((item) => item.content || [])
+          .map((content) => content.text || content.output_text || "")
+          .filter(Boolean)
+          .join("\n")
+          .trim();
+
+        return output || "The API returned a response, but no readable text was found.";
+      }
+
+      function clean(value) {
+        return (value || "").replace(/\s+/g, " ").trim();
+      }
+    })();
+  </script>
+</body>
+</html>
