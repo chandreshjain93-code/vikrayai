@@ -1,33 +1,39 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en-IN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#047857">
   <title>VikrayAI</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --green: #047857;
+    }
+    .message { padding: 12px 16px; border-radius: 12px; margin-bottom: 12px; max-width: 85%; }
+    .user { background: var(--green); color: white; margin-left: auto; }
+    .assistant { background: #f1f5f9; border: 1px solid #e2e8f0; }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-emerald-50 to-amber-50 min-h-screen">
-  <div class="max-w-6xl mx-auto p-6">
-    <header class="bg-white rounded-3xl shadow p-6 mb-8 flex justify-between items-center">
+<body class="bg-gradient-to-br from-emerald-50 to-amber-50 min-h-screen font-sans">
+  <main class="max-w-6xl mx-auto p-6">
+    <header class="topbar bg-white rounded-3xl shadow p-6 mb-8 flex justify-between items-center">
       <div class="flex items-center gap-4">
-        <div class="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-bold">V</div>
+        <div class="logo w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-bold">V</div>
         <div>
           <h1 class="text-3xl font-bold text-emerald-700">VikrayAI</h1>
           <p class="text-gray-500">AI for Kirana Stores</p>
         </div>
       </div>
-      <div class="flex items-center gap-4">
-        <button onclick="showApiSettings()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-2xl text-sm">🔑 API Key</button>
-        <div class="text-right text-sm">
-          Jaipur Market Live<br>
-          <span class="text-emerald-600 font-medium">CA Chandresh</span>
-        </div>
+      <div class="text-right">
+        Jaipur Market Live<br>
+        <span class="text-emerald-600 font-medium">CA Chandresh</span>
       </div>
     </header>
 
     <div class="grid md:grid-cols-12 gap-6">
-      <!-- Summary -->
-      <div class="md:col-span-4 space-y-6">
+      <!-- Sidebar -->
+      <aside class="md:col-span-4 space-y-6">
         <div class="bg-white rounded-3xl p-6 shadow">
           <h2 class="font-semibold mb-4">Today's Summary • 02 Jun</h2>
           <div class="space-y-6">
@@ -36,7 +42,10 @@
               <div class="h-2 bg-gray-100 rounded-full"><div class="h-2 bg-emerald-500 rounded-full w-4/5"></div></div>
             </div>
             <div>
-              <div class="flex justify-between mb-1"><span class="text-gray-600">Stock Value</span><span class="font-bold">₹18,450</span></div>
+              <div class="flex justify-between mb-1"><span class="text-gray-600">Sales</span><span class="font-bold">₹18,900</span></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-1"><span class="text-gray-600">Outstanding</span><span class="font-bold">₹6,450</span></div>
             </div>
           </div>
         </div>
@@ -44,16 +53,16 @@
         <button onclick="showPricing()" class="w-full py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl font-medium">
           💰 Pro Plan - ₹99/month
         </button>
-      </div>
+      </aside>
 
-      <!-- Chat -->
-      <div class="md:col-span-8 bg-white rounded-3xl shadow-xl flex flex-col h-[620px]">
+      <!-- Chat Panel -->
+      <div class="md:col-span-8 bg-white rounded-3xl shadow-xl flex flex-col h-[640px]">
         <div class="p-6 border-b bg-emerald-50 rounded-t-3xl">
           <h3 class="font-semibold">ChatGPT Assistant</h3>
-          <p class="text-sm text-emerald-600">Real AI Responses</p>
+          <p class="text-sm text-emerald-600">Real AI • Speak in Hindi</p>
         </div>
-        
-        <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-6"></div>
+
+        <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-4"></div>
 
         <div class="p-6 border-t">
           <div class="flex gap-3">
@@ -67,22 +76,73 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- API Key Modal -->
-  <div id="apiModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-    <div class="bg-white rounded-3xl p-8 w-full max-w-md mx-4">
-      <h3 class="text-xl font-semibold mb-4">Enter OpenAI API Key</h3>
-      <input id="apiKeyInput" type="password" placeholder="sk-proj-..." 
-             class="w-full border border-gray-300 rounded-2xl px-5 py-4 text-sm mb-6">
-      <div class="flex gap-3">
-        <button onclick="saveApiKey()" class="flex-1 bg-emerald-600 text-white py-4 rounded-2xl font-medium">Save Key</button>
-        <button onclick="closeModal()" class="flex-1 bg-gray-200 py-4 rounded-2xl font-medium">Cancel</button>
-      </div>
-    </div>
-  </div>
+  </main>
 
   <script>
     let OPENAI_API_KEY = localStorage.getItem("vikrayAI_key") || "";
 
-   
+    const chat = document.getElementById('chat');
+
+    function addMessage(text, isUser) {
+      const div = document.createElement('div');
+      div.className = isUser ? 'flex justify-end' : 'flex justify-start';
+      div.innerHTML = `<div class="message ${isUser ? 'user' : 'assistant'}">${text}</div>`;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    addMessage("नमस्ते! API Key सेट करें (🔑 button) और पूछें।", false);
+
+    function showApiSettings() {
+      const key = prompt("Paste your OpenAI API Key:", OPENAI_API_KEY);
+      if (key) {
+        OPENAI_API_KEY = key.trim();
+        localStorage.setItem("vikrayAI_key", OPENAI_API_KEY);
+        alert("✅ API Key Saved!");
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('input');
+      const question = input.value.trim();
+      if (!question) return;
+
+      addMessage(question, true);
+      input.value = "";
+
+      if (!OPENAI_API_KEY) {
+        addMessage("❌ Please set your OpenAI API Key first.", false);
+        return;
+      }
+
+      const loading = document.createElement('div');
+      loading.innerHTML = `<div class="message assistant">Thinking...</div>`;
+      chat.appendChild(loading);
+
+      try {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${OPENAI_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              { role: "system", content: "You are VikrayAI, a helpful AI for Indian kirana store owners. Answer in simple Hindi or Hinglish." },
+              { role: "user", content: question }
+            ]
+          })
+        });
+
+        const data = await res.json();
+        loading.remove();
+        addMessage(data.choices[0].message.content, false);
+      } catch (e) {
+        loading.remove();
+        addMessage("❌ API Error. Check your key and credits.", false);
+      }
+    }
+
+    function showPricing() {
+     
