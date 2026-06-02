@@ -16,33 +16,27 @@
           <p class="text-gray-500">AI for Kirana Stores</p>
         </div>
       </div>
-      <div class="text-right">
-        Jaipur Market Live<br>
-        <span class="text-emerald-600 font-medium">CA Chandresh</span>
+      <div class="flex items-center gap-4">
+        <button onclick="showApiSettings()" class="text-sm bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-2xl">🔑 API Settings</button>
+        <div class="text-right">
+          Jaipur Market Live<br>
+          <span class="text-emerald-600 font-medium">CA Chandresh</span>
+        </div>
       </div>
     </header>
 
     <div class="grid md:grid-cols-12 gap-6">
-      <!-- Editable Summary -->
+      <!-- Summary -->
       <div class="md:col-span-4 space-y-6">
         <div class="bg-white rounded-3xl p-6 shadow">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="font-semibold">Today's Summary • 02 Jun</h2>
-            <button onclick="toggleEdit()" class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">Edit Mode</button>
-          </div>
-          
+          <h2 class="font-semibold mb-4">Today's Summary • 02 Jun</h2>
           <div class="space-y-6">
             <div>
-              <div class="flex justify-between mb-1"><span class="text-gray-600">Profit</span><span id="profit-val" class="font-bold text-emerald-600">₹1,240</span></div>
-              <input id="profit-input" type="text" value="1240" class="hidden w-full border rounded px-3 py-1 text-sm">
+              <div class="flex justify-between mb-1"><span class="text-gray-600">Profit</span><span class="font-bold text-emerald-600">₹1,240</span></div>
+              <div class="h-2 bg-gray-100 rounded-full"><div class="h-2 bg-emerald-500 rounded-full w-4/5"></div></div>
             </div>
             <div>
-              <div class="flex justify-between mb-1"><span class="text-gray-600">Sales</span><span id="sales-val" class="font-bold">₹18,900</span></div>
-              <input id="sales-input" type="text" value="18900" class="hidden w-full border rounded px-3 py-1 text-sm">
-            </div>
-            <div>
-              <div class="flex justify-between mb-1"><span class="text-gray-600">Outstanding</span><span id="outstanding-val" class="font-bold">₹6,450</span></div>
-              <input id="outstanding-input" type="text" value="6450" class="hidden w-full border rounded px-3 py-1 text-sm">
+              <div class="flex justify-between mb-1"><span class="text-gray-600">Stock Value</span><span class="font-bold">₹18,450</span></div>
             </div>
           </div>
         </div>
@@ -52,60 +46,37 @@
         </button>
       </div>
 
-      <!-- Chat Area -->
+      <!-- Chat -->
       <div class="md:col-span-8 bg-white rounded-3xl shadow-xl flex flex-col h-[620px]">
         <div class="p-6 border-b bg-emerald-50 rounded-t-3xl">
           <h3 class="font-semibold">ChatGPT Assistant</h3>
+          <p class="text-sm text-emerald-600">Real AI • Hindi Support</p>
         </div>
-        <div id="chat" class="flex-1 p-6 overflow-y-auto"></div>
+        
+        <div id="chat" class="flex-1 p-6 overflow-y-auto space-y-6"></div>
+
         <div class="p-6 border-t">
           <div class="flex gap-3">
-            <input id="input" type="text" placeholder="टमाटर का price क्या रखूँ?" class="flex-1 border-2 rounded-3xl px-6 py-5">
-            <button onclick="sendMessage()" class="bg-emerald-600 text-white px-12 py-5 rounded-3xl">Send</button>
+            <input id="input" type="text" placeholder="टमाटर का price क्या रखूँ?" 
+                   class="flex-1 border-2 border-gray-300 rounded-3xl px-6 py-5 focus:outline-none focus:border-emerald-500"
+                   onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-12 py-5 rounded-3xl font-medium">
+              Send
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <script>
-    let isEditing = false;
-
-    function toggleEdit() {
-      isEditing = !isEditing;
-      document.getElementById('profit-input').classList.toggle('hidden', !isEditing);
-      document.getElementById('sales-input').classList.toggle('hidden', !isEditing);
-      document.getElementById('outstanding-input').classList.toggle('hidden', !isEditing);
-    }
-
-    // Auto update displayed values when editing
-    ['profit', 'sales', 'outstanding'].forEach(field => {
-      const input = document.getElementById(field + '-input');
-      input.addEventListener('input', () => {
-        document.getElementById(field + '-val').textContent = '₹' + input.value;
-      });
-    });
-
-    // Chat functionality (same as before)
-    function addMessage(text, isUser) {
-      const chat = document.getElementById('chat');
-      const div = document.createElement('div');
-      div.className = `mb-4 ${isUser ? 'text-right' : 'text-left'}`;
-      div.innerHTML = `<div class="inline-block max-w-[80%] p-4 rounded-3xl ${isUser ? 'bg-emerald-600 text-white' : 'bg-gray-100'}">${text}</div>`;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    addMessage("नमस्ते! आज कैसे मदद करूँ?", false);
-
-    async function sendMessage() {
-      // ... (same ChatGPT code as previous version)
-      alert("ChatGPT feature coming in next update");
-    }
-
-    function showPricing() {
-      alert("Pro Plan - ₹99/month\n\n• Unlimited AI\n• Editable Dashboard\n• Voice Input\n• Stock Management");
-    }
-  </script>
-</body>
-</html>
+  <!-- Hidden API Settings Modal -->
+  <div id="apiModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
+    <div class="bg-white rounded-3xl p-8 w-full max-w-md">
+      <h3 class="font-semibold mb-4">OpenAI API Key</h3>
+      <input id="apiKey" type="password" placeholder="sk-..." 
+             class="w-full border border-gray-300 rounded-2xl px-5 py-4 text-sm mb-4">
+      <div class="flex gap-3">
+        <button onclick="saveApiKey()" class="flex-1 bg-emerald-600 text-white py-4 rounded-2xl">Save Key</button>
+        <button onclick="closeModal()" class="flex-1 bg-gray-200 py-4 rounded-2xl">Cancel</button>
+      </div>
+      <p class="text-xs text-gray-500 mt-4">Your key is saved only in this
