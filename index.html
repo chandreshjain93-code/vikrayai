@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VikrayAI</title>
+  <title>VikrayAI - AI for Kirana</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#047857">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body class="bg-gradient-to-br from-emerald-50 to-amber-50 min-h-screen">
   <div class="max-w-6xl mx-auto p-6">
@@ -75,46 +81,4 @@
       const key = prompt("Paste your Gemini API Key here:", GEMINI_API_KEY);
       if (key && key.trim() !== "") {
         GEMINI_API_KEY = key.trim();
-        localStorage.setItem("gemini_key", GEMINI_API_KEY);
-        alert("✅ Key Saved! Now you can chat.");
-      }
-    }
-
-    async function sendMessage() {
-      const input = document.getElementById('input');
-      const question = input.value.trim();
-      if (!question) return;
-
-      addMessage(question, true);
-      input.value = "";
-
-      if (!GEMINI_API_KEY) {
-        addMessage("❌ Please set Gemini API Key first (click 🔑 button)", false);
-        return;
-      }
-
-      const loading = document.createElement('div');
-      loading.innerHTML = `<div class="bg-gray-100 rounded-3xl px-6 py-4">Gemini सोच रहा है...</div>`;
-      chat.appendChild(loading);
-
-      try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: question }] }]
-          })
-        });
-
-        const data = await res.json();
-        loading.remove();
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't reply.";
-        addMessage(reply, false);
-      } catch (e) {
-        loading.remove();
-        addMessage("❌ Error: " + e.message, false);
-      }
-    }
-  </script>
-</body>
-</html>
+       
